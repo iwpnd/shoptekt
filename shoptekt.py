@@ -3,18 +3,16 @@ import requests as re
 import pandas as pd
 
 app = Flask(__name__)
- 
 
-@app.route('/api', methods=['GET'])
-def index():
-    lon = float(request.args.get('lon'))
-    lat = float(request.args.get('lat'))
-
-    # meinprospekt api url
+def request_data(lat,lon):
     url = 'http://www.meinprospekt.de/service/Map/getBranchMarkers?categoryId=5%2C2%2C%2C3&lat={}&lng={}&limit=100&web=1&version=2.0'.format(lat,lon)
-    response = re.get(url).json()['data']
+    return re.get(url).json()['data']
 
+def create_df_from_response(response):
     df = pd.DataFrame(response)
+    return df
+    
+def format_response_df(df):
     df = df[['merchantName', 'street', 'zip', 'city']].copy()
     df.columns = ['Name', 'StrNr', 'PLZ', 'Stadt']
 
@@ -31,7 +29,21 @@ def index():
     df.Stadt = ['Berlin' if 'berlin' in x.lower() else x for x in df.Stadt]
 
     df = df[df.Name != "Kaiser's Tengelmann"]
+    return df
 
+@app.route('/api', methods=['GET'])
+def index():
+    # catch args
+    lon = float(request.args.get('lon'))
+    lat = float(request.args.get('lat'))
+
+    # get request response data, put it into a pandas
+    # dataframe and format it as you wish
+    response = request_data(lat,lon)
+    df = create_df_from_response(response)
+    df = format_response_df(df)
+
+    # make_response object csv
     resp = make_response(df.to_csv())
     resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
     resp.headers["Content-Type"] = "text/csv"
