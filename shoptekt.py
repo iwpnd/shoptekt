@@ -10,6 +10,7 @@ def index():
     lon = float(request.args.get('lon'))
     lat = float(request.args.get('lat'))
 
+    # meinprospekt api url
     url = 'http://www.meinprospekt.de/service/Map/getBranchMarkers?categoryId=5%2C2%2C%2C3&lat={}&lng={}&limit=100&web=1&version=2.0'.format(lat,lon)
     response = re.get(url).json()['data']
 
