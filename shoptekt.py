@@ -13,7 +13,7 @@ def request_data(lat,lon):
     lat -- latitude in epsg4326
     lon -- longitude in epsg4326
     """
-    url = 'http://www.meinprospekt.de/service/Map/getBranchMarkers?categoryId=5%2C2%2C%2C3&lat={}&lng={}&limit=5&web=1&version=2.0'.format(lat,lon)
+    url = 'http://www.meinprospekt.de/service/Map/getBranchMarkers?categoryId=5%2C2%2C%2C3&lat={}&lng={}&limit=50&web=1&version=2.0'.format(lat,lon)
     return re.get(url).json()['data']
 
 
