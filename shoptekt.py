@@ -1,5 +1,5 @@
 from flask import Flask, flash, render_template, request
-from flask import redirect, url_for, send_file
+from flask import url_for, make_response
 import requests as re
 import pandas as pd
 
@@ -35,8 +35,8 @@ def format_response_df(df):
     keywords:
     df -- dataframe object from requests response
     """
-    df = df[['merchantName', 'street', 'zip', 'city']].copy()
-    df.columns = ['Name', 'StrNr', 'PLZ', 'Stadt']
+    df = df[['merchantName', 'street', 'zip', 'city', 'lng', 'lat']].copy()
+    df.columns = ['Name', 'StrNr', 'PLZ', 'Stadt', 'lon', 'lat']
 
     df.Name = ['Bio Company' if 'Bio Company' in x else x for x in df.Name]
     df.Name = ['Edeka' if 'EDEKA' in x else x for x in df.Name]
@@ -53,12 +53,12 @@ def format_response_df(df):
     return df
 
 
-@app.route('/api', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        # catch args
-        lon = float(request.args.get('lon'))
-        lat = float(request.args.get('lat'))
+        # request form data on post
+        lon = request.form['lon']
+        lat = request.form['lat']
 
         # get request response data, put it into a pandas
         # dataframe and format it as you wish
@@ -71,10 +71,11 @@ def index():
         resp.headers["Content-Disposition"] = "attachment; filename=export.csv"
         resp.headers["Content-Type"] = "text/csv"
         return resp
+
      # Render file input form
     return render_template('shopstekt.html')
 
  
 # We only need this for local development.
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run()
