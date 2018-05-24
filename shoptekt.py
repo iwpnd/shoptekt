@@ -29,6 +29,7 @@ def format_response_df(df):
     df.Stadt = ['Berlin' if 'berlin' in x.lower() else x for x in df.Stadt]
 
     df = df[df.Name != "Kaiser's Tengelmann"]
+
     return df
 
 @app.route('/api', methods=['GET'])
