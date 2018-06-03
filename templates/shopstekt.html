@@ -27,13 +27,22 @@
             <form action="{{ url_for('index') }}" method="post" enctype="multipart/form-data" class="col-12">
                     <legend>
                         <h3 style="padding-bottom:50px">shopstekt
-                            <small>get store adresses around a given lat/lon (epsg:4326)</small>
+                            <small>get store adresses around a given lat/lon or adress</small>
                         </h3>
                     </legend>
                 <div class="form-group">
-                    <input type="text" name="lon" placeholder="longitude / x e.g. 13.358021" class="form-control" required="true">
-                    <input type="text" name="lat" placeholder="latitude / y e.g. 52.4497577" class="form-control" required="true">
+                    <input type="text" name="adress" placeholder="Mustermannstr. 9, 10117 Berlin" class="form-control">
                 </div>
+                <div class="form-group">
+                    <input type="text" name="lon" placeholder="longitude / x e.g. 13.358021" class="form-control">
+                    <input type="text" name="lat" placeholder="latitude / y e.g. 52.4497577" class="form-control">
+                </div>
+                    {% if error %}
+                    <p><strong>Error:</strong> {{ error }}
+                    <div class="form-group">
+                        <input type="submit" value=clear class="btn btn-primary bg-info text-white form-control">
+                    </div>
+                    {% endif %}
                 <div class="form-group">
                     <input type="submit" value=submit class="btn btn-primary bg-info text-white form-control">
                 </div>
