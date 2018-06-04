@@ -1,5 +1,5 @@
 from flask import Flask, flash, render_template, request
-from flask import url_for, make_response
+from flask import url_for, make_response, redirect
 import requests as re
 import pandas as pd
 from geopy.geocoders import Nominatim
@@ -78,6 +78,7 @@ def make_csv_response(df):
 def index():
     error=None
     if request.method == 'POST':
+        error = None
         # request form data on post
         lon = request.form['lon']
         lat = request.form['lat']
@@ -88,6 +89,7 @@ def index():
             df = create_df_from_response(response)
             df = format_response_df(df)
             return make_csv_response(df)
+
         elif adress:
             location = geocode_adress(adress)
             try:
@@ -95,9 +97,10 @@ def index():
                 df = create_df_from_response(response)
                 df = format_response_df(df)
                 return make_csv_response(df)
-            except KeyError:
+            except (KeyError, AttributeError):
                 error='{} is not a valid adress'.format(adress)
                 return render_template('shopstekt.html', error=error)
+        
         elif lon and lat and adress:
             response = request_data(lat, lon)
             df = create_df_from_response(response)
@@ -109,7 +112,7 @@ def index():
             return render_template('shopstekt.html', error=error)
 
      # Render file input form
-    return render_template('shopstekt.html', error=error)
+    return render_template('shopstekt.html')
 
  
 # We only need this for local development.
